@@ -1,0 +1,98 @@
+/**
+ * RG VERSE - Centralized Branding & Configuration File
+ * ----------------------------------------------------
+ * Aap apni app ki saari branding, names, logos, Telegram bots aur social links
+ * yahan se ek hi jagah edit kar sakte hain!
+ */
+
+window.APP_CONFIG = {
+  // === PRIMARY BRANDING ===
+  appName: "RG VERSE",
+  appFullName: "RG Study Verse",
+  appSubtitle: "RG Study Verse",
+  editionBadge: "PREMIUM EDITION",
+  tagline: "Your Ultimate Smart Learning Hub",
+  brandLogo: "/static/brand-logo.webp",
+  favicon: "/static/brand-logo.webp",
+
+  // === BACKEND API SERVER ===
+  // Empty "" routes requests through our local proxy to eliminate CORS errors and enable high-speed caching.
+  // Change to another backend domain if deploying separately.
+  serverUrl: "",
+  apnaCollegeOrigin: "",
+
+  // === TELEGRAM & BOT SETTINGS ===
+  telegramBotName: "RGVerseBot",
+  telegramBotUrl: "https://t.me/RGVerseBot",
+  telegramChannelName: "RG Verse Official",
+  telegramChannelUrl: "https://t.me/RGVerseOfficial",
+  fallbackBot: "RGVerseBot",
+
+  // === SOCIAL CHANNELS ===
+  whatsappUrl: "https://whatsapp.com/channel/RGVerseCommunity",
+  youtubeUrl: "https://www.youtube.com/@RGVerse",
+  instagramUrl: "https://www.instagram.com/rgverse_official",
+  contactUrl: "https://t.me/RGVerseBot",
+
+  // Socials Screen Cards
+  socialCards: [
+    {
+      name: "Telegram Channel",
+      desc: "Daily Batches & Notes",
+      image: "/static/images/remote/m9k6R.jpg",
+      link: "https://t.me/RGVerseOfficial"
+    },
+    {
+      name: "RG Verse Bot",
+      desc: "Instant Plan & Materials",
+      image: "/static/brand-logo.webp",
+      link: "https://t.me/RGVerseBot"
+    },
+    {
+      name: "WhatsApp Community",
+      desc: "Official Channel",
+      image: "/static/images/remote/9eIrB.jpg",
+      link: "https://whatsapp.com/channel/RGVerseCommunity"
+    },
+    {
+      name: "YouTube Channel",
+      desc: "Lectures & Updates",
+      image: "/static/images/remote/s5B6h.jpg",
+      link: "https://www.youtube.com/@RGVerse"
+    },
+    {
+      name: "Instagram",
+      desc: "Reels & Announcements",
+      image: "/static/images/remote/CpqFL.jpg",
+      link: "https://www.instagram.com/rgverse_official"
+    },
+    {
+      name: "PW & Top Batches",
+      desc: "IIT, NEET & Boards",
+      image: "/static/images/remote/6kl7K.jpg",
+      link: "#batches"
+    }
+  ],
+
+  // === HOME BANNER CONFIGURATION ===
+  banner: {
+    enabled: true,
+    title: "RG VERSE",
+    highlight: "Smart Learning",
+    kicker: "LEARN • GROW • EXCEL",
+    messages: [
+      "Access Premium Batches & DPPs in One Place.",
+      "PW, NextToppers, Apna College & More.",
+      "Smart Video Streaming with Custom Speed.",
+      "High-speed Notes & PDF Viewer.",
+      "Empowering Every Student with RG Verse."
+    ],
+    bgImage: "/static/images/traivoai-home-banner.webp",
+    ctaText: "Explore Batches"
+  },
+
+  // === USER & INTERFACE DEFAULTS ===
+  defaultStudentName: "RG Student",
+  footerText: "Made with ❤️ in India by RG Verse",
+  copyrightText: "© 2026 RG Verse. All Rights Reserved."
+};

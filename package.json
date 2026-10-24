@@ -1,0 +1,23 @@
+{
+  "name": "rg-verse",
+  "version": "1.0.0",
+  "description": "RG VERSE - Premium Smart Study Platform & Telegram Mini App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "rg-verse",
+    "study",
+    "batches",
+    "education",
+    "telegram-mini-app",
+    "pw-batches"
+  ],
+  "author": "RG Verse",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

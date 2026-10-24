@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="max-age=60, stale-while-revalidate=300">
+
+    <title>RG VERSE | Premium Study Platform</title>
+    <link rel="icon" type="image/webp" href="/static/brand-logo.webp">
+    <link rel="apple-touch-icon" href="/static/brand-logo.webp">
+
+    <!-- Prebuilt Tailwind & FontAwesome -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://telegram.org">
+    <link rel="stylesheet" href="/static/css/app-tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- React 18 & Telegram WebApp -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Global Error Handler -->
+    <script>
+        window.onerror = function(message, source, lineno, colno) {
+            console.error("Global Error:", message, source, lineno, colno);
+            return false;
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+        body {
+            background: #e5edff;
+            background-image:
+                radial-gradient(circle at 8% 18%, rgba(255,255,255,0.45) 0%, transparent 30%),
+                radial-gradient(circle at 92% 12%, rgba(196,181,253,0.38) 0%, transparent 32%),
+                radial-gradient(circle at 10% 82%, rgba(103,232,249,0.25) 0%, transparent 32%),
+                linear-gradient(145deg, #c7dcff 0%, #e5edff 48%, #f3e4ff 100%);
+            background-attachment: scroll;
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: 0;
+            overscroll-behavior-y: none;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .study-header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px clamp(16px, 3vw, 24px);
+            background: #e5edff;
+            border-bottom: 1px solid rgba(99,102,241,.12);
+        }
+        .study-header h1 { font-size: clamp(15px, 2vw, 20px); color: #182b56; -webkit-text-fill-color: #182b56 !important; background: none !important; }
+        .study-header p { color: #65749a; font-size: 9px; letter-spacing: .13em; margin-top: 5px; }
+        .study-explore, .study-menu { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-height: 42px; border-radius: 14px; }
+        .study-explore { gap: 7px; padding: 0 14px; background: #eef2ff; border: 1px solid #c5d3fa; color: #344cab; font-size: 11px; font-weight: 800; }
+        .study-menu { width: 42px; background: #fff; border: 1px solid #d9e2f6; color: #334155; }
+        .study-brand-circle { padding: 2px; border-radius: 50%; overflow: hidden; }
+        .study-brand-circle img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .study-menu-backdrop { position: fixed; inset: 0; z-index: 65; background: rgba(15,23,42,.38); touch-action: none; }
+        .study-sidebar { width: min(360px, calc(100vw - 44px)); height: 100dvh; max-height: 100dvh; overscroll-behavior: contain; outline: none; }
+        .study-sidebar > div { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+
+        @media (max-width: 370px) {
+            .study-sidebar > div { padding-left: 16px; padding-right: 16px; }
+            .study-sidebar .p-5 { padding: 16px; }
+            .study-sidebar .gap-4 { gap: 12px; }
+            .study-sidebar .h-\[76px\] { width: 56px; height: 56px; }
+            .study-header { gap: 8px; padding: 12px; }
+            .study-explore { width: 42px; padding: 0; }
+            .study-explore span { display: none; }
+        }
+
+        .tab-active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white !important;
+            box-shadow: 0 4px 10px -2px rgba(124, 58, 237, 0.3);
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-inactive {
+            background: white;
+            color: #475569;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .collection-card {
+            background: linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .collection-card:active { transform: scale(0.97); }
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        .slide-up { animation: slideUp 0.4s ease forwards; }
+        .animate-fade-in { animation: fadeIn 0.25s ease forwards; }
+        .animate-slide-in-left { animation: slideInLeft 0.22s ease forwards; }
+        .animate-slide-in-right { animation: slideInRight 0.22s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .floating-nav {
+            border-radius: 30px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
+            z-index: 50;
+            padding: 8px 12px;
+        }
+
+        @media (max-width: 767px) {
+            .floating-nav {
+                position: fixed;
+                bottom: calc(20px + env(safe-area-inset-bottom));
+                left: 50%;
+                transform: translateX(-50%);
+                width: 92%;
+                max-width: 400px;
+            }
+        }
+
+        .snap-x-container {
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+        }
+
+        @media (max-width: 767px) {
+            .glass-panel, .glass-header {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                background: rgba(255, 255, 255, 0.96);
+            }
+            .collection-card { box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.13); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 antialiased">
+    <div id="root">
+        <style>
+            @keyframes pulse-glow {
+                0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+                70% { transform: scale(1.05); box-shadow: 0 0 0 18px rgba(168, 85, 247, 0); }
+                100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
+            }
+
+            @keyframes loading-bar {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(200%); }
+            }
+
+            @keyframes fade-in-logo {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .splash-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                width: 100vw;
+                background:
+                    radial-gradient(circle at 50% 42%, rgba(124, 58, 237, 0.38), transparent 32%),
+                    radial-gradient(circle at 85% 12%, rgba(59, 130, 246, 0.22), transparent 28%),
+                    linear-gradient(145deg, #0b1020, #111a32 55%, #17122e);
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 9999;
+            }
+
+            .splash-logo {
+                width: 84px;
+                height: 84px;
+                border-radius: 24px;
+                overflow: hidden;
+                margin-bottom: 20px;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(139, 92, 246, 0.35);
+                animation: pulse-glow 2.2s infinite, fade-in-logo 0.5s ease-out;
+            }
+
+            .splash-logo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .splash-title {
+                font-weight: 900;
+                font-size: 24px;
+                color: #ffffff;
+                letter-spacing: 1.5px;
+                margin: 0;
+                background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                animation: fade-in-logo 0.6s ease-out;
+            }
+
+            .splash-subtitle {
+                font-weight: 800;
+                font-size: 11px;
+                color: #a78bfa;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                margin-top: 6px;
+                animation: fade-in-logo 0.7s ease-out;
+            }
+
+            .splash-loader-track {
+                margin-top: 40px;
+                width: 90px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: 4px;
+                overflow: hidden;
+                animation: fade-in-logo 0.8s ease-out;
+            }
+
+            .splash-loader-thumb {
+                width: 50%;
+                height: 100%;
+                background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+                border-radius: 4px;
+                animation: loading-bar 1.2s infinite ease-in-out;
+            }
+        </style>
+
+        <div class="splash-container">
+            <div class="splash-logo">
+                <img src="/static/brand-logo.webp" alt="RG VERSE">
+            </div>
+            <h2 class="splash-title">RG VERSE</h2>
+            <p class="splash-subtitle">Study Verse Premium</p>
+            <div class="splash-loader-track">
+                <div class="splash-loader-thumb"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Centralized Branding Configuration -->
+    <script src="/config.js"></script>
+
+    <!-- 2. Application Modules -->
+    <script src="/static/js/Shared.js"></script>
+    <script src="/static/js/OtherScreens.js"></script>
+    <script src="/static/js/HomeScreen.js"></script>
+    <script src="/static/js/ContentScreen.js"></script>
+    <script src="/static/js/ProfileScreen.js"></script>
+    <script src="/static/js/PwCatalog.js"></script>
+    <script src="/static/js/PWCourseScreens.js"></script>
+    <script src="/static/js/apna-public.js"></script>
+    <script src="/static/js/ApnaCollege.js"></script>
+    <script src="/static/js/NextTopper.js"></script>
+    <script src="/static/js/App.js"></script>
+</body>
+</html>
