@@ -331,11 +331,11 @@
     });
     const [searchQuery, setSearchQuery] = useState("");
     const traivoMessages = (window.APP_CONFIG && window.APP_CONFIG.banner && window.APP_CONFIG.banner.messages) || [
-      "Access Premium Batches & DPPs in One Place.",
-      "PW, NextToppers, Apna College & More.",
-      "Smart Video Streaming with Custom Speed.",
-      "High-speed Notes & PDF Viewer.",
-      "Empowering Every Student with RG Verse."
+      "Apna College Coding — All Batches Included (Delta, Sigma & Alpha).",
+      "Full-Stack Web Dev & DSA in Java/C++ for College Students.",
+      "Professional Video Editing & Motion Graphics for Creators.",
+      "Graphic Design, UI/UX & Thumbnail Mastery for Freelancers.",
+      "Targeted for UG Students to Learn High-Income In-Demand Skills."
     ];
     const [traivoMessageIndex, setTraivoMessageIndex] = useState(0);
     const [traivoTypedText, setTraivoTypedText] = useState("");
@@ -913,35 +913,35 @@
                     .traivo-home-card, .traivo-home-art, .traivo-live-dot { animation: none !important; transition: none !important; }
                 }
                 .traivo-home-card {
-                    position: relative; isolation: isolate; overflow: hidden; min-height: 142px;
-                    border: 1px solid rgba(103,232,249,.65); border-radius: 22px;
-                    background: #062d4b; box-shadow: 0 14px 28px rgba(8,47,73,.22);
+                    position: relative; isolation: isolate; overflow: hidden; min-height: 148px;
+                    border: 1px solid rgba(56,189,248,.4); border-radius: 22px;
+                    background: #041426; box-shadow: 0 14px 28px rgba(2,10,20,.35);
                     transition: transform .25s ease, box-shadow .25s ease; color: #fff;
                 }
-                .traivo-home-card:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(14,116,144,.3); }
-                .traivo-home-art { position: absolute; inset: 0; z-index: -2; background: url('/static/images/traivoai-home-banner.webp') center center / cover no-repeat; animation: traivo-pan 15s ease-in-out infinite alternate; }
-                .traivo-home-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(3,31,55,.97) 0%, rgba(4,52,78,.92) 36%, rgba(5,70,94,.26) 67%, rgba(5,70,94,.05) 100%); }
-                .traivo-home-content { position: relative; min-height: 142px; padding: 15px 17px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; max-width: 74%; }
+                .traivo-home-card:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(14,116,144,.35); }
+                .traivo-home-art { position: absolute; inset: 0; z-index: -2; background: url('/static/images/coding-skills-banner.jpg') right center / cover no-repeat; animation: traivo-pan 15s ease-in-out infinite alternate; }
+                .traivo-home-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(2,12,28,.98) 0%, rgba(3,18,40,.94) 42%, rgba(4,26,55,.62) 75%, rgba(4,26,55,.22) 100%); }
+                .traivo-home-content { position: relative; min-height: 148px; padding: 15px 17px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; max-width: 75%; }
                 .traivo-logo-row { display:flex; align-items:center; gap:6px; line-height:1; }
-                .traivo-pin { width:22px; height:22px; display:grid; place-items:center; border-radius:9px 9px 9px 2px; transform: rotate(-45deg); background:linear-gradient(135deg,#2dd4bf,#0ea5e9); box-shadow:0 3px 12px rgba(45,212,191,.45); }
-                .traivo-pin i { transform:rotate(45deg); font-size:11px; color:#fff; }
-                .traivo-wordmark { font-size:18px; font-weight:900; letter-spacing:-.7px; color:#e7faff; }
-                .traivo-wordmark span { color:#b794f4; }
-                .traivo-live-dot { width:6px; height:6px; border-radius:50%; background:#67e8f9; box-shadow:0 0 0 0 rgba(103,232,249,.7); animation:traivo-pulse 1.8s infinite; }
-                .traivo-kicker { margin-top:4px; font-size:7px; letter-spacing:1.3px; color:#a5f3fc; font-weight:900; }
-                .traivo-title { margin-top:6px; font-size:17px; line-height:1.05; letter-spacing:-.65px; font-weight:900; text-shadow:0 2px 9px rgba(2,22,35,.55); }
-                .traivo-title em { font-style:normal; color:#5eead4; }
-                .traivo-typing { min-height:15px; margin-top:5px; display:flex; align-items:center; gap:5px; font-size:8.5px; line-height:1.3; font-weight:800; color:#e0f2fe; overflow:hidden; white-space:nowrap; max-width:100%; }
-                .traivo-typing i { color:#f0abfc; font-size:8px; }
-                .traivo-typing b { width:1px; height:10px; background:#67e8f9; animation:traivo-caret .7s step-end infinite; }
-                .traivo-cta { display:inline-flex; align-items:center; gap:7px; margin-top:7px; padding:6px 10px; border-radius:999px; background:linear-gradient(90deg,#06b6d4,#6d28d9); box-shadow:0 5px 12px rgba(76,29,149,.42); font-size:9px; font-weight:900; }
+                .traivo-pin { width:22px; height:22px; display:grid; place-items:center; border-radius:7px; background:linear-gradient(135deg,#0ea5e9,#6366f1); box-shadow:0 3px 12px rgba(14,165,233,.45); }
+                .traivo-pin i { font-size:11px; color:#fff; }
+                .traivo-wordmark { font-size:17px; font-weight:900; letter-spacing:-.6px; color:#e0f2fe; }
+                .traivo-wordmark span { color:#38bdf8; }
+                .traivo-live-dot { width:6px; height:6px; border-radius:50%; background:#38bdf8; box-shadow:0 0 0 0 rgba(56,189,248,.7); animation:traivo-pulse 1.8s infinite; }
+                .traivo-kicker { margin-top:4px; font-size:7.5px; letter-spacing:1px; color:#7dd3fc; font-weight:900; }
+                .traivo-title { margin-top:5px; font-size:16px; line-height:1.15; letter-spacing:-.5px; font-weight:900; text-shadow:0 2px 9px rgba(2,12,28,.65); }
+                .traivo-title em { font-style:normal; color:#38bdf8; }
+                .traivo-typing { min-height:15px; margin-top:5px; display:flex; align-items:center; gap:5px; font-size:8.5px; line-height:1.3; font-weight:700; color:#e0f2fe; overflow:hidden; white-space:nowrap; max-width:100%; }
+                .traivo-typing i { color:#a78bfa; font-size:9px; }
+                .traivo-typing b { width:1px; height:10px; background:#38bdf8; animation:traivo-caret .7s step-end infinite; }
+                .traivo-cta { display:inline-flex; align-items:center; gap:7px; margin-top:7px; padding:6px 12px; border-radius:999px; background:linear-gradient(90deg,#0ea5e9,#6366f1); box-shadow:0 5px 12px rgba(99,102,241,.42); font-size:9px; font-weight:900; }
                 .traivo-cta i { font-size:9px; transition:transform .25s ease; }
                 .traivo-home-card:hover .traivo-cta i { transform:translateX(3px); }
-                @keyframes traivo-pan { from { transform:scale(1); background-position:51% center; } to { transform:scale(1.06); background-position:57% center; } }
-                @keyframes traivo-pulse { 70% { box-shadow:0 0 0 6px rgba(103,232,249,0); } 100% { box-shadow:0 0 0 0 rgba(103,232,249,0); } }
+                @keyframes traivo-pan { from { transform:scale(1); background-position:51% center; } to { transform:scale(1.05); background-position:56% center; } }
+                @keyframes traivo-pulse { 70% { box-shadow:0 0 0 6px rgba(56,189,248,0); } 100% { box-shadow:0 0 0 0 rgba(56,189,248,0); } }
                 @keyframes traivo-caret { 50% { opacity:0; } }
-                @media (min-width: 640px) { .traivo-home-card, .traivo-home-content { min-height:160px; } .traivo-home-content { padding:19px 22px; max-width:59%; } .traivo-wordmark { font-size:22px; } .traivo-title { font-size:23px; } .traivo-kicker { font-size:8px; } .traivo-typing { font-size:10px; } .traivo-cta { font-size:10px; padding:7px 13px; } }
-                @media (max-width: 370px) { .traivo-home-card, .traivo-home-content { min-height:132px; } .traivo-home-content { padding:13px 14px; max-width:79%; } .traivo-title { font-size:15px; } .traivo-typing { font-size:7.5px; } .traivo-cta { margin-top:5px; padding:5px 8px; font-size:8px; } }
+                @media (min-width: 640px) { .traivo-home-card, .traivo-home-content { min-height:162px; } .traivo-home-content { padding:19px 22px; max-width:62%; } .traivo-wordmark { font-size:21px; } .traivo-title { font-size:21px; } .traivo-kicker { font-size:8.5px; } .traivo-typing { font-size:10px; } .traivo-cta { font-size:10px; padding:7px 14px; } }
+                @media (max-width: 370px) { .traivo-home-card, .traivo-home-content { min-height:136px; } .traivo-home-content { padding:13px 14px; max-width:82%; } .traivo-title { font-size:14.5px; } .traivo-typing { font-size:7.5px; } .traivo-cta { margin-top:5px; padding:5px 9px; font-size:8px; } }
             `,
       ),
       React.createElement(
@@ -1031,33 +1031,33 @@
                   "span",
                   { className: "traivo-pin" },
                   React.createElement("i", {
-                    className: "fas fa-map-marker-alt",
+                    className: "fas fa-code",
                   }),
                 ),
                 React.createElement(
                   "span",
                   { className: "traivo-wordmark" },
-                  ((window.APP_CONFIG && window.APP_CONFIG.appName) || "RG VERSE"),
-                  React.createElement("span", {className: "text-cyan-400"}, " HUB"),
+                  ((window.APP_CONFIG && window.APP_CONFIG.banner && window.APP_CONFIG.banner.hubName) || "SKILLS & CODING"),
+                  React.createElement("span", {className: "text-cyan-400 font-extrabold"}, " HUB"),
                 ),
                 React.createElement("span", { className: "traivo-live-dot" }),
               ),
               React.createElement(
                 "div",
                 { className: "traivo-kicker" },
-                "PLAN \u2022 EXPLORE \u2022 EXPERIENCE",
+                ((window.APP_CONFIG && window.APP_CONFIG.banner && window.APP_CONFIG.banner.kicker) || "CODING • VIDEO EDITING • GRAPHICS • UG SKILLS"),
               ),
               React.createElement(
                 "div",
                 { className: "traivo-title" },
-                "Your Next ",
-                React.createElement("em", null, "Adventure"),
-                " Awaits!",
+                ((window.APP_CONFIG && window.APP_CONFIG.banner && window.APP_CONFIG.banner.titlePrefix) || "Apna College Coding & "),
+                React.createElement("em", null, ((window.APP_CONFIG && window.APP_CONFIG.banner && window.APP_CONFIG.banner.highlight) || "Creative Skills")),
+                ((window.APP_CONFIG && window.APP_CONFIG.banner && window.APP_CONFIG.banner.titleSuffix) || " — All Batches Included!"),
               ),
               React.createElement(
                 "div",
                 { className: "traivo-typing", "aria-live": "polite" },
-                React.createElement("i", { className: "fas fa-sparkles" }),
+                React.createElement("i", { className: "fas fa-laptop-code" }),
                 React.createElement("span", null, traivoTypedText),
                 React.createElement("b", null),
               ),

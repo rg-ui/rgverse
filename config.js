@@ -74,20 +74,23 @@ window.APP_CONFIG = {
     }
   ],
 
-  // === HOME BANNER CONFIGURATION ===
+  // === HOME BANNER CONFIGURATION (UG CODING & SKILLS) ===
   banner: {
     enabled: true,
-    title: "RG VERSE",
-    highlight: "Smart Learning",
-    kicker: "LEARN • GROW • EXCEL",
+    badge: "UG SKILLS & CAREER",
+    hubName: "SKILLS & CODING",
+    titlePrefix: "Apna College Coding & ",
+    highlight: "Creative Skills",
+    titleSuffix: " — All Batches Included!",
+    kicker: "CODING • VIDEO EDITING • GRAPHIC DESIGN • UG SKILLS",
     messages: [
-      "Access Premium Batches & DPPs in One Place.",
-      "PW, NextToppers, Apna College & More.",
-      "Smart Video Streaming with Custom Speed.",
-      "High-speed Notes & PDF Viewer.",
-      "Empowering Every Student with RG Verse."
+      "Apna College Coding — All Batches Included (Delta, Sigma & Alpha).",
+      "Full-Stack Web Dev & DSA in Java/C++ for College Students.",
+      "Professional Video Editing & Motion Graphics for Creators.",
+      "Graphic Design, UI/UX & Thumbnail Mastery for Freelancers.",
+      "Targeted for UG Students to Learn High-Income In-Demand Skills."
     ],
-    bgImage: "/static/images/traivoai-home-banner.webp",
+    bgImage: "/static/images/coding-skills-banner.jpg",
     ctaText: "Explore Batches"
   },
 
