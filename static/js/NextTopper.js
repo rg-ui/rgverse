@@ -627,7 +627,7 @@
                 className:
                   "text-[10px] font-black uppercase tracking-[.15em] text-sky-600",
               },
-              "AKKI STUDY X \xB7 NEXT TOPPERS",
+              ((window.APP_CONFIG && window.APP_CONFIG.appName) || "RG VERSE") + " \xB7 NEXT TOPPERS",
             ),
             React.createElement(
               "h1",
@@ -1160,7 +1160,7 @@
                 React.createElement(
                   "span",
                   { className: "text-[11px] font-extrabold" },
-                  "AKKI STUDY X",
+                  ((window.APP_CONFIG && window.APP_CONFIG.appName) || "RG VERSE"),
                 ),
               ),
               React.createElement("iframe", {

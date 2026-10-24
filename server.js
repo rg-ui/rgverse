@@ -17,17 +17,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static assets
+// Serve static assets first
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use(express.static(path.join(__dirname)));
 
 // High-speed memory cache
 const cache = new Map();
 const CACHE_TTL_MS = 60 * 1000; // 1 min for general APIs
-const IMAGE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours for thumbnails & images
+const IMAGE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours for thumbnails
 
-// 1. Reverse Proxy for /api/* (PW, NextToppers, Thumbnails, Backend)
-app.all('/api/*', async (req, res) => {
+// Core Backend Proxy Function (APIs, Watch Pages, Video Players, Streams)
+async function proxyToBackend(req, res) {
   const targetUrl = REMOTE_API_BASE + req.originalUrl;
   const cacheKey = `${req.method}:${req.originalUrl}`;
   const isThumb = req.originalUrl.includes('/api/thumb');
@@ -50,11 +50,15 @@ app.all('/api/*', async (req, res) => {
     const fetchOptions = {
       method: req.method,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': req.headers['accept'] || '*/*',
         'Referer': REMOTE_API_BASE + '/app',
       }
     };
+
+    if (req.headers['cookie']) {
+      fetchOptions.headers['Cookie'] = req.headers['cookie'];
+    }
 
     if (req.headers['content-type']) {
       fetchOptions.headers['Content-Type'] = req.headers['content-type'];
@@ -71,35 +75,43 @@ app.all('/api/*', async (req, res) => {
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    const timeout = setTimeout(() => controller.abort(), 25000);
     fetchOptions.signal = controller.signal;
 
     const remoteRes = await fetch(targetUrl, fetchOptions);
     clearTimeout(timeout);
 
-    const contentType = remoteRes.headers.get('content-type') || 'application/json';
+    // Forward cookies if any
+    const setCookie = remoteRes.headers.get('set-cookie');
+    if (setCookie) {
+      res.setHeader('Set-Cookie', setCookie);
+    }
 
-    // JSON or text responses
+    const contentType = remoteRes.headers.get('content-type') || 'text/html';
+
+    // JSON or HTML / Text responses
     if (contentType.includes('application/json') || contentType.includes('text/')) {
       let text = await remoteRes.text();
 
-      // IMPORTANT: First strip any absolute Heroku URLs so all links/thumbs become relative local URLs
+      // Convert absolute Heroku domain to relative local paths
       text = text
         .replace(/https:\/\/(?:akkistudyxpro|RG\s*VERSE)-44094a367971\.herokuapp\.com/gi, '')
         .replace(/https:\/\/akkistudyxpro-44094a367971\.herokuapp\.com/gi, '');
 
-      // Rebrand visible backend responses without corrupting URLs
+      // Rebrand to RG Verse
       text = text
         .replace(/Akki\s*Study\s*X\s*Pro/gi, 'RG VERSE')
         .replace(/Akki\s*Study\s*X\s*Main/gi, 'RG Verse Official')
         .replace(/Akki\s*Study\s*X/gi, 'RG VERSE')
+        .replace(/AKKI\s*STUDY\s*X/gi, 'RG VERSE')
         .replace(/AKKISTUDYX1/gi, 'RGVerseOfficial')
         .replace(/AkkiRobo_Bot/gi, 'RGVerseBot')
         .replace(/AkkiStudyX_App/gi, 'RGVerseBot')
         .replace(/t\.me\/AKKISTUDYX1/gi, 't.me/RGVerseOfficial')
         .replace(/Made By Akki In/gi, 'Made with ❤️ by RG Verse in');
 
-      if (req.method === 'GET' && remoteRes.status === 200) {
+      // Only cache API json, do not cache dynamic player sessions
+      if (req.method === 'GET' && remoteRes.status === 200 && req.originalUrl.startsWith('/api/')) {
         cache.set(cacheKey, {
           timestamp: Date.now(),
           status: remoteRes.status,
@@ -112,12 +124,11 @@ app.all('/api/*', async (req, res) => {
       res.setHeader('Content-Type', contentType);
       return res.send(text);
     } else {
-      // Binary data: Images, Thumbnails, PDFs, etc.
+      // Binary data: Images, Video Streams, PDFs
       const arrayBuffer = await remoteRes.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // Cache images for 24 hours for instant loading
-      if (req.method === 'GET' && remoteRes.status === 200) {
+      if (req.method === 'GET' && remoteRes.status === 200 && isThumb) {
         cache.set(cacheKey, {
           timestamp: Date.now(),
           status: remoteRes.status,
@@ -129,11 +140,13 @@ app.all('/api/*', async (req, res) => {
 
       res.status(remoteRes.status);
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+      if (isThumb) {
+        res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+      }
       return res.send(buffer);
     }
   } catch (err) {
-    console.error(`[API Proxy Error] ${req.method} ${targetUrl}:`, err.message);
+    console.error(`[Proxy Error] ${req.method} ${targetUrl}:`, err.message);
 
     const cached = cache.get(cacheKey);
     if (cached) {
@@ -142,15 +155,40 @@ app.all('/api/*', async (req, res) => {
       return res.status(cached.status).send(cached.data);
     }
 
-    res.status(502).json({
-      success: false,
-      error: 'Backend request failed: ' + err.message,
-      target: targetUrl
-    });
+    res.status(502).send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>RG Verse Player Error</title>
+      </head>
+      <body style="background:#090d16;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+        <div style="text-align:center;padding:24px;">
+          <h2 style="color:#f43f5e;margin-bottom:8px;">Video Stream Unavailable</h2>
+          <p style="color:#94a3b8;max-width:400px;line-height:1.6;font-size:14px;">${err.message}</p>
+          <button onclick="window.location.reload()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;padding:10px 24px;border-radius:12px;cursor:pointer;font-weight:bold;margin-top:12px;">Retry</button>
+        </div>
+      </body>
+      </html>
+    `);
   }
-});
+}
 
-// 2. Reverse Proxy for /data/* (Apna College)
+// 1. API endpoints proxy
+app.all('/api/*', proxyToBackend);
+
+// 2. Video Player & Watch routes proxy (PW, Apna College, NextToppers, Streams)
+app.all('/ac/watch/*', proxyToBackend);
+app.all('/pw/watch/*', proxyToBackend);
+app.all('/nexttopper/watch/*', proxyToBackend);
+app.all('/watch/*', proxyToBackend);
+app.all('/watch_pdf_ext*', proxyToBackend);
+app.all('/dl/*', proxyToBackend);
+app.all('/stream/*', proxyToBackend);
+app.all('/video/*', proxyToBackend);
+app.all('/player/*', proxyToBackend);
+
+// 3. Apna College data proxy
 app.all('/data/*', async (req, res) => {
   const targetUrl = APNA_API_BASE + req.originalUrl;
   const cacheKey = `data:${req.originalUrl}`;
@@ -197,7 +235,7 @@ app.all('/data/*', async (req, res) => {
   }
 });
 
-// SPA Route handler: Any route like /app, /courses, /profile loads index.html
+// 4. SPA Route handler: Client app routes like /app, /, etc. load index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -207,6 +245,6 @@ app.listen(PORT, () => {
   console.log(`🚀 RG VERSE Study Platform is LIVE!`);
   console.log(`🌐 Local URL:   http://localhost:${PORT}`);
   console.log(`📱 App URL:     http://localhost:${PORT}/app`);
-  console.log(`⚡ API Backend: Proxied & Fast Image Caching Active`);
+  console.log(`⚡ Full Video Players & Streaming Engine Active`);
   console.log(`=================================================`);
 });

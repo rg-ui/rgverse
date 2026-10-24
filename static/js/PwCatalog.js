@@ -1644,7 +1644,7 @@
                         className:
                           "relative z-10 text-[11px] font-semibold text-white/70",
                       },
-                      "Existing Akki Study X stream template \xB7 Speed & source quality",
+                      "RG Verse stream player \xB7 Speed & source quality",
                     ),
                   )
                 : React.createElement(

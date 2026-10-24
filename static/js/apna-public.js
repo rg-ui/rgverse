@@ -1,7 +1,7 @@
 // Owner's CORS-enabled public JSON. No cookies, auth spoofing or locked access.
 (function () {
   "use strict";
-  const ORIGIN = (window.APP_CONFIG && typeof window.APP_CONFIG.apnaCollegeOrigin === "string") ? window.APP_CONFIG.apnaCollegeOrigin : "",
+  const ORIGIN = (typeof window !== "undefined" && window.location && window.location.origin && window.location.origin !== "null") ? window.location.origin : "https://ac.lrnt.ccwu.cc",
     cache = new Map(),
     pending = new Map();
   const MEDIA = new Set([

@@ -1188,11 +1188,11 @@
                     className:
                       "max-w-[40%] truncate text-[11px] font-extrabold text-slate-300",
                   },
-                  "AKKI STUDY X",
+                  ((window.APP_CONFIG && window.APP_CONFIG.appName) || "RG VERSE"),
                 ),
               ),
               React.createElement("iframe", {
-                title: "Akki Study X PW stream player",
+                title: "RG Verse PW stream player",
                 src: activePlayer,
                 allowFullScreen: true,
                 allow: "autoplay; fullscreen; picture-in-picture",
