@@ -1,7 +1,9 @@
 (() => {
   const { useState, useEffect } = window.React;
   const WhatsAppPopup = ({ onClose, config }) => {
-    if (config && config.wa_popup_enabled === "off") return null;
+    window.dismissWaPopup = onClose;
+    const finalHtml = (window.APP_CONFIG && window.APP_CONFIG.noticePopup && window.APP_CONFIG.noticePopup.html) || (config && config.wa_popup_html);
+    if (!finalHtml && config && config.wa_popup_enabled === "off") return null;
     return React.createElement(
       "div",
       {
@@ -25,9 +27,9 @@
           },
           React.createElement("i", { className: "fas fa-times" }),
         ),
-        config && config.wa_popup_html
+        finalHtml
           ? React.createElement("div", {
-              dangerouslySetInnerHTML: { __html: config.wa_popup_html },
+              dangerouslySetInnerHTML: { __html: finalHtml },
             })
           : React.createElement(
               React.Fragment,
@@ -448,7 +450,15 @@
     );
     const [virtualId, setVirtualId] = useState(null);
     const [batchMeta, setBatchMeta] = useState({});
-    const [appConfig, setAppConfig] = useState(null);
+    const [appConfig, setAppConfig] = useState(() =>
+      window.APP_CONFIG && window.APP_CONFIG.noticePopup && window.APP_CONFIG.noticePopup.enabled
+        ? {
+            success: true,
+            wa_popup_enabled: "on",
+            wa_popup_html: window.APP_CONFIG.noticePopup.html,
+          }
+        : null
+    );
     useEffect(() => {
       let alive = true,
         busy = false;
@@ -518,6 +528,7 @@
       setShowWaPopup(false);
       sessionStorage.setItem("akki_wa_popup_seen", "true");
     };
+    window.dismissWaPopup = closeWaPopup;
     const [botUsername, setBotUsername] = useState(() => {
       const urlBot = urlParams.get("bot");
       if (urlBot && urlBot !== "AkkiRobo_Bot") {
