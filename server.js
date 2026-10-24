@@ -221,8 +221,24 @@ app.all('/stream/*', proxyToBackend);
 app.all('/video/*', proxyToBackend);
 app.all('/player/*', proxyToBackend);
 
-// 3. Apna College data proxy
+// 3. Apna College local data & fallback proxy
+app.use('/data', express.static(path.join(__dirname, 'data'), {
+  maxAge: '1h',
+  setHeaders: (res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  }
+}));
+
 app.all('/data/*', async (req, res) => {
+  const cleanPath = req.originalUrl.replace(/^\//, '').split('?')[0];
+  const localFile = path.join(__dirname, cleanPath);
+  if (fs.existsSync(localFile) && fs.statSync(localFile).isFile()) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.sendFile(localFile);
+  }
+
   const targetUrl = APNA_API_BASE + req.originalUrl;
   const cacheKey = `data:${req.originalUrl}`;
 
@@ -251,21 +267,21 @@ app.all('/data/*', async (req, res) => {
         contentType,
         data: text
       });
+      res.status(remoteRes.status);
+      res.setHeader('Content-Type', contentType);
+      return res.send(text);
     }
-
-    res.status(remoteRes.status);
-    res.setHeader('Content-Type', contentType);
-    return res.send(text);
   } catch (err) {
     console.error(`[Apna Proxy Error] ${targetUrl}:`, err.message);
-    const cached = cache.get(cacheKey);
-    if (cached) {
-      res.setHeader('Content-Type', cached.contentType);
-      res.setHeader('X-Cache', 'STALE');
-      return res.status(cached.status).send(cached.data);
-    }
-    res.status(502).json({ success: false, error: err.message });
   }
+
+  const cachedFallback = cache.get(cacheKey);
+  if (cachedFallback) {
+    res.setHeader('Content-Type', cachedFallback.contentType);
+    res.setHeader('X-Cache', 'STALE');
+    return res.status(200).send(cachedFallback.data);
+  }
+  res.status(404).json({ error: 'Batch data not found' });
 });
 
 // 4. SPA Route handler: Client app routes like /app, /, etc. load index.html

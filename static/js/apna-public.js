@@ -71,72 +71,54 @@
       source: "apna",
     };
   }
+  async function fetchFromUrl(url) {
+    const controller = new AbortController(),
+      timer = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(url, {
+        mode: "cors",
+        credentials: "omit",
+        signal: controller.signal,
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) return null;
+      const text = await response.text();
+      if (!text || text.startsWith("<!DOCTYPE") || text.startsWith("<html") || text.includes("cf-browser-verification")) {
+        return null;
+      }
+      return JSON.parse(text);
+    } catch (_) {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   function load(path) {
     const hit = cache.get(path);
     if (hit && hit.until > Date.now()) return Promise.resolve(hit.data);
     if (pending.has(path)) return pending.get(path);
-    const controller = new AbortController(),
-      timer = setTimeout(() => controller.abort(), 18000);
-    const task = fetch(ORIGIN + path, {
-      mode: "cors",
-      credentials: "omit",
-      signal: controller.signal,
-      headers: { Accept: "application/json" },
-    })
-      .then(async (response) => {
-        if (!response.ok)
-          throw Error(
-            response.status === 401 || response.status === 403
-              ? "The source denied this public request. Please check the source site access settings."
-              : "Apna College source is unavailable. Please retry.",
-          );
-        if (Number(response.headers.get("content-length") || 0) > 4000000)
-          throw Error("Course metadata is too large.");
-        let text = "";
-        if (response.body?.getReader) {
-          const reader = response.body.getReader(),
-            decoder = new TextDecoder();
-          let size = 0;
-          try {
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              size += value.byteLength;
-              if (size > 4000000) {
-                await reader.cancel();
-                throw Error("Course metadata is too large.");
-              }
-              text += decoder.decode(value, { stream: true });
-            }
-            text += decoder.decode();
-          } finally {
-            reader.releaseLock();
-          }
-        } else {
-          text = await response.text();
-          if (text.length > 4000000)
-            throw Error("Course metadata is too large.");
+
+    const origins = [
+      (typeof window !== "undefined" && window.location && window.location.origin) ? window.location.origin : "",
+      "https://ac.lrnt.ccwu.cc"
+    ].filter(Boolean);
+
+    const task = (async () => {
+      for (const origin of origins) {
+        const fullUrl = origin.replace(/\/+$/, "") + path;
+        const result = await fetchFromUrl(fullUrl);
+        if (result) {
+          cache.set(path, { data: result, until: Date.now() + 180000 });
+          if (cache.size > 80) cache.delete(cache.keys().next().value);
+          return result;
         }
-        return JSON.parse(text);
-      })
-      .then((data) => {
-        cache.set(path, { data, until: Date.now() + 180000 });
-        if (cache.size > 60) cache.delete(cache.keys().next().value);
-        return data;
-      })
-      .catch((error) => {
-        throw Error(
-          error.name === "AbortError"
-            ? "Apna College request timed out. Please retry."
-            : error instanceof SyntaxError
-              ? "Invalid Apna College source data."
-              : error.message,
-        );
-      })
-      .finally(() => {
-        clearTimeout(timer);
-        pending.delete(path);
-      });
+      }
+      throw Error("Apna College source is temporarily unavailable. Please retry.");
+    })().finally(() => {
+      pending.delete(path);
+    });
+
     pending.set(path, task);
     return task;
   }
